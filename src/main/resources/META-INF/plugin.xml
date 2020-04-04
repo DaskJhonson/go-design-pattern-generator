@@ -1,0 +1,67 @@
+<idea-plugin>
+    <id>com.cn.xida.plugin.godesignpattern</id>
+    <name>Go-Design-Pattern-Generator</name>
+    <version>1.0.0</version>
+    <vendor email="gududecongwu@126.com" url="https://github.com/OrPolyzos/design-patterns-plugin">Dask Jhonson</vendor>
+
+    <description><![CDATA[
+    <h2>This is a plug-in for GoLand,which can quickly generate a variety of design patterns based on user's code.</h2>
+    <p>More Usage can be found <a href="https://github.com/OrPolyzos/design-patterns-plugin">here</a>.</p>
+    <h3>Currently supported design patterns:</h3>
+    <ul>
+        <li>Behavioral</li>
+        <ul>
+            <li>Strategy</li>
+        </ul>
+        <li>Creational</li>
+        <ul>
+            <li>Builder (Inner)</li>
+            <li>Factory</li>
+            <li>Singleton</li>
+        </ul>
+    </ul>
+    ]]></description>
+
+    <!-- Requires the Go plugin -->
+    <depends>org.jetbrains.plugins.go</depends>
+    <!-- Requires the platform module to distinguish it from a legacy plugin -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <!--标记支持的IDE从2016.2版本开始
+    更多信息参考:http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html
+    -->
+    <idea-version since-build="174"/>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <!--右键菜单栏新建分组-->
+        <group id="GoDesignPatternsGroup" text="Go Design Patterns" popup="true" icon="/META-INF/go.svg">
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+            <!-- Singleton Group -->
+            <group id="SingletonGroup" popup="true" text="Singleton">
+                <add-to-group group-id="GoDesignPatternsGroup" anchor="first"/>
+                <action id="GoDesignMode.actions.SingletonSafeAction" class="actions.SingletonSafeAction" text="Singleton(Safe)"
+                        description="Singleton Mode(Safe)">
+                </action>
+                <action id="GoDesignMode.actions.SingletonUnSafeAction" class="actions.SingletonUnSafeAction" text="Singleton(UnSafe)"
+                        description="Singleton Mode(UnSafe)">
+                </action>
+            </group>
+            <action id="GoDesignMode.actions.BuilderAction" class="actions.BuilderAction" text="Builder"
+                    description="Builder Mode">
+            </action>
+            <action id="GoDesignMode.actions.FactoryAction" class="actions.FactoryAction" text="Factory"
+                    description="Factory Mode">
+            </action>
+            <action id="GoDesignMode.actions.ProxyAction" class="actions.ProxyAction" text="Proxy"
+                    description="Proxy Mode">
+            </action>
+            <action id="GoDesignMode.actions.TestAction" class="actions.TestAction" text="Test"
+                    description="Factory Mode">
+            </action>
+        </group>
+    </actions>
+</idea-plugin>

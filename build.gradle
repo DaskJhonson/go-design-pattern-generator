@@ -1,0 +1,44 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.intellij' version '0.4.17'
+}
+
+group 'com.cn.xida.plugin'
+version '1.0.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    maven { url 'https://maven.aliyun.com/repository/public/' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url 'https://dl.bintray.com/jetbrains/intellij-plugin-service' }
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+// See https://github.com/JetBrains/gradle-intellij-plugin/
+intellij {
+    //当前IDEA开发平台版本
+    version 'IU-2019.3.3'
+    //Goland需要指定为IU
+    type 'IU'
+    //插件版本号，需要与version指定的版本兼容，具体查看方式就是在当前IDEA市场中下载一个再看版本
+    plugins 'org.jetbrains.plugins.go:193.6494.35.125'
+}
+
+runIde{
+    ideDirectory 'G:\\Jerbrain\\apps\\Goland\\ch-0\\193.6494.61'
+}
+
+patchPluginXml {
+    changeNotes """
+      Add change notes here.<br>
+      <em>most HTML tags may be used</em>"""
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
