@@ -49,12 +49,34 @@ public abstract class DesignPattern {
 
     protected abstract GoTypeSpec getGoTypeSpec();
 
-    public void generateText() {
-        GoTemplate template=new GoTemplate(file);
-        createTemplate(template);
-        template.startTemplate(editor, getCalcOffset(editor, getGoTypeSpec()), "Generate " + this.getClass().getSimpleName(), null);
-        reformatCode();
-        optimizeImports();
+    //获取当前文件中所有方法和结构体使用到的引用
+    public static Set<GoRefactoringUtil.Import> getImports(@NotNull GoFile file, @NotNull Editor editor, @Nullable GoTypeSpec typeSpecToGenerate) {
+        final Set<GoRefactoringUtil.Import> importsToAdd = new HashSet<>();
+        //获取已经存在的方法
+        List<GoNamedSignatureOwner> existingMethods = typeSpecToGenerate != null ? typeSpecToGenerate.getAllMethods() : ContainerUtil.emptyList();
+
+        Iterator iterator;
+        if (typeSpecToGenerate != null) {
+            iterator = typeSpecToGenerate.getAllMethods().iterator();
+            while (iterator.hasNext()) {
+                GoNamedSignatureOwner m = (GoNamedSignatureOwner) iterator.next();
+                if (!isAlreadyImplemented(m, existingMethods)) {
+                    m.accept(new PsiRecursiveElementWalkingVisitor() {
+                        public void visitElement(PsiElement o) {
+                            if (o instanceof GoTypeReferenceExpression) {
+                                GoType resolveType = ((GoTypeReferenceExpression) o).resolveType(GoPsiImplUtil.createContextOnElement(file));
+                                GoRefactoringUtil.TypeTextWithImports typeTextWithImports = GoRefactoringUtil.getTypeTextWithImports(file, resolveType, false);
+                                importsToAdd.addAll(typeTextWithImports.imports);
+                            } else {
+                                super.visitElement(o);
+                            }
+                        }
+                    });
+                }
+            }
+            return importsToAdd;
+        }
+        return importsToAdd;
     }
 
     //产生函数参数结构，如:(a int, b int)
@@ -141,34 +163,16 @@ public abstract class DesignPattern {
         }
     }
 
-    //获取当前文件中所有方法和结构体使用到的引用
-    public static Set<GoRefactoringUtil.Import> getImports(@NotNull GoFile file, @NotNull Editor editor, @Nullable GoTypeSpec typeSpecToGenerate) {
-        final Set<GoRefactoringUtil.Import> importsToAdd = ContainerUtil.newHashSet();
-        //获取已经存在的方法
-        List<GoNamedSignatureOwner> existingMethods = typeSpecToGenerate != null ? typeSpecToGenerate.getAllMethods() : ContainerUtil.emptyList();
-
-        Iterator iterator;
-        if (typeSpecToGenerate != null) {
-            iterator = typeSpecToGenerate.getAllMethods().iterator();
-            while (iterator.hasNext()) {
-                GoNamedSignatureOwner m = (GoNamedSignatureOwner) iterator.next();
-                if (!isAlreadyImplemented(m, existingMethods)) {
-                    m.accept(new PsiRecursiveElementWalkingVisitor() {
-                        public void visitElement(PsiElement o) {
-                            if (o instanceof GoTypeReferenceExpression) {
-                                GoType resolveType = ((GoTypeReferenceExpression) o).resolveType(GoPsiImplUtil.createContextOnElement(file));
-                                GoRefactoringUtil.TypeTextWithImports typeTextWithImports = GoRefactoringUtil.getTypeTextWithImports(file, resolveType, false);
-                                importsToAdd.addAll(typeTextWithImports.imports);
-                            } else {
-                                super.visitElement(o);
-                            }
-                        }
-                    });
-                }
-            }
-            return importsToAdd;
+    public void generateText() {
+        GoTemplate template = new GoTemplate(file);
+        createTemplate(template);
+        Set<GoRefactoringUtil.Import> set = new HashSet<>();
+        for (GoTypeSpec spec : file.getTypes()) {
+            if (!GoTypeUtil.isInterface(spec)) set.addAll(getImports(file, editor, spec));
         }
-        return null;
+        template.startTemplate(editor, getCalcOffset(editor, getGoTypeSpec()), "Generate " + this.getClass().getSimpleName(), null, set);
+        reformatCode();
+        optimizeImports();
     }
 
     //判断当前结构体是否有了其他方法。如果有，那么其他方法中的接受者的名称将被用来生成新方法的接受者名称
@@ -223,7 +227,7 @@ public abstract class DesignPattern {
         return isDuplicated.get();
     }
 
-    //自动导包
+    //优化引用包的组织
     protected void optimizeImports() {
         //使用官方的自动导包方法
         OptimizeImportsAction.actionPerformedImpl(event.getDataContext());

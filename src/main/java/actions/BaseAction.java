@@ -1,6 +1,6 @@
 package actions;
 
-import com.goide.psi.*;
+import com.goide.psi.GoFile;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
@@ -8,11 +8,8 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.ResolveState;
 import org.jetbrains.annotations.NotNull;
 import utils.NotificationUtil;
-
-import java.util.Optional;
 
 /**
  * @author DASK
@@ -44,93 +41,4 @@ public abstract class BaseAction extends AnAction {
 
 
     protected abstract void actionPerformedImpl(AnActionEvent event,Project project,GoFile file,Editor editor);
-
-    private void FucTest(StringBuilder builder,GoFile file){
-        builder.append("FucTest:\n");
-        for (GoFunctionDeclaration declaration : file.getFunctions()) {
-            /*方法名*/
-            builder.append(declaration.getName());
-            builder.append("\n");
-            /*参数名和类型*/
-            Optional.ofNullable(declaration.getSignature().getParameters()).ifPresent((p) -> {
-                for (GoParamDefinition definition : p.getDefinitionList()) {
-                    builder.append("[").append(definition.getName())
-                            .append("=>");
-                    Optional.ofNullable(definition.getGoType(ResolveState.initial()))
-                            .ifPresent((t) -> builder.append(t.getText()).append("]"));
-                }
-                builder.append(",");
-            });
-            builder.append("\n");
-            /*返回的值的名称和类型名*/
-            Optional.ofNullable(declaration.getSignature().getResult())
-                    .filter((p) -> p.getParameters() != null)
-                    .ifPresent((p) -> {
-                        for (GoParamDefinition definition : p.getParameters().getDefinitionList()) {
-                            builder.append("[").append(definition.getName())
-                                    .append("=>");
-                            Optional.ofNullable(definition.getGoType(ResolveState.initial()))
-                                    .ifPresent((t) -> builder.append(t.getText()).append("]"));
-                        }
-                        builder.append(",");
-                    });
-            builder.append("\n");
-            /*返回值类型名*/
-            Optional.ofNullable(declaration.getSignature().getResultType()).ifPresent(
-                    (p) -> builder.append(p.getText()).append(",")
-            );
-
-            builder.append("\n\n");
-        }
-        builder.append("\n");
-    }
-
-    private void MethodTest(StringBuilder builder,GoFile file){
-        builder.append("MethodTest:\n");
-        for (GoMethodDeclaration declaration : file.getMethods()) {
-            /*方法名*/
-            builder.append(declaration.getName());
-            builder.append("\n");
-            Optional.ofNullable(declaration.getReceiver()).ifPresent((r)->{
-                /*所属对象名*/
-                builder.append(r.getName()).append("=>");
-                /*所属对象类型名*/
-                builder.append(declaration.getReceiverType().getText()).append(",");
-            });
-            builder.append("\n\n");
-        }
-        builder.append("\n");
-    }
-
-    private void VarTest(StringBuilder builder,GoFile file){
-        for (GoVarDefinition declaration : file.getVars()) {
-            /*变量名和值*/
-            builder.append(declaration.getName());
-            builder.append("=")
-                    .append(declaration.getValue())
-                    .append("\n\n");
-        }
-        builder.append("\n");
-    }
-
-    private void StrucTest(StringBuilder builder,GoFile file){
-        builder.append("MethodTest:\n");
-        for (GoTypeSpec type:file.getTypes()){
-            /*强转可得结构体对象*/
-            GoStructType structType=(GoStructType) type.getSpecType().getType();
-            for (GoFieldDeclaration declaration:structType.getFieldDeclarationList()){
-                //获取变量名和类型
-                for (GoFieldDefinition definition:declaration.getFieldDefinitionList()) builder.append(definition.getName()).append(",");
-                //获取变量类型
-                builder.append("=>")
-                        .append(declaration.getType().getText())
-                        .append("-")
-                        .append(declaration.getTagText());//获取标签值
-            }
-        }
-    }
-
-//    GoImplementMethodsHandler对象选择框PsiElementListNavigator.navigateOrCreatePopup()
-//    GoGenerateConstructorIntention 成员选择框GoMemberChooser
-//    GoImplementMethodsHandler.MyChooseByNamePopup方法选择器
 }

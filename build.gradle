@@ -35,8 +35,12 @@ runIde{
 
 patchPluginXml {
     changeNotes """
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>"""
+      Finish the initialization of golang project and add several common design pattern generation templates<br>
+      """
+}
+
+publishPlugin {
+    token intellijPublishToken
 }
 
 tasks.withType(JavaCompile) {

@@ -72,7 +72,7 @@ public class BuilderTemplate extends DesignPattern {
         builder.append(String.format(
                 "\nfunc (builder %s) Build() *%s {\n" +
                     "\treturn builder.%s" +
-                "\n}",
+                        "\n}\n",
                 builderName,typeName,lowerName
         ));
         /*func (builder FruitBuilder) SetName(name string) Builder {
@@ -129,7 +129,7 @@ public class BuilderTemplate extends DesignPattern {
                 .append("\n")
                 .append("\tCreate")
                 .append(setupFunctionParameters(list))
-                .append(" *").append(typeName).append("\n}");
+                .append(" *").append(typeName).append("\n}\n");
 
         template.addTextSegment(builder.toString());
     }

@@ -2,22 +2,27 @@
     <id>com.cn.xida.plugin.godesignpattern</id>
     <name>Go-Design-Pattern-Generator</name>
     <version>1.0.0</version>
-    <vendor email="gududecongwu@126.com" url="https://github.com/OrPolyzos/design-patterns-plugin">Dask Jhonson</vendor>
+    <vendor email="gududecongwu@126.com" url="https://github.com/DaskJhonson/go-design-pattern-generator">Dask Jhonson
+    </vendor>
 
     <description><![CDATA[
-    <h2>This is a plug-in for GoLand,which can quickly generate a variety of design patterns based on user's code.</h2>
-    <p>More Usage can be found <a href="https://github.com/OrPolyzos/design-patterns-plugin">here</a>.</p>
+    <h2>This is a plug-in for GoLang,which can quickly generate a variety of design patterns based on user's code.</h2>
+    <p>More Usage can be found <a href="https://github.com/DaskJhonson/go-design-pattern-generator">here</a>.</p>
     <h3>Currently supported design patterns:</h3>
     <ul>
-        <li>Behavioral</li>
+        <li>Behavioral:</li>
         <ul>
-            <li>Strategy</li>
+            <li>More ...</li>
         </ul>
-        <li>Creational</li>
+        <li>Structural:</li>
         <ul>
-            <li>Builder (Inner)</li>
+            <li>Proxy</li>
+        </ul>
+        <li>Creational:</li>
+        <ul>
+            <li>Builder</li>
             <li>Factory</li>
-            <li>Singleton</li>
+            <li>Singleton(Safe/UnSafe)</li>
         </ul>
     </ul>
     ]]></description>
@@ -59,9 +64,10 @@
             <action id="GoDesignMode.actions.ProxyAction" class="actions.ProxyAction" text="Proxy"
                     description="Proxy Mode">
             </action>
-            <action id="GoDesignMode.actions.TestAction" class="actions.TestAction" text="Test"
-                    description="Factory Mode">
-            </action>
+            <!--just for test-->
+            <!--            <action id="GoDesignMode.actions.TestAction" class="actions.TestAction" text="Test"-->
+            <!--                    description="Test">-->
+            <!--            </action>-->
         </group>
     </actions>
 </idea-plugin>
